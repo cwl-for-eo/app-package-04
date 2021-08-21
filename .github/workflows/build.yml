@@ -16,6 +16,9 @@ jobs:
       - run: cwltool --validate app-package.cwl#s2-composites
 
   container-crop:
+   
+    needs: validate
+    
     runs-on: ubuntu-latest
 
     steps:
@@ -25,4 +28,5 @@ jobs:
           VERSION: v4.2.0
           BINARY: yq_linux_amd64
       - run: chmod +x /usr/bin/yq
-      - run: yq
+      - run: echo "APP_VERSION=$( yq e '.\"s:softwareVersion\"' app-package.cwl | tr -d \'\n\' )" >> $GITHUB_ENV
+      - run: echo $APP_VERSION
