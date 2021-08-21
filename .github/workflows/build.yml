@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - env:
-        VERSION=v4.2.0
-        BINARY=yq_linux_amd64
       - uses: actions/checkout@v2
       - run: wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq 
+        env:
+          VERSION: v4.2.0
+          BINARY: yq_linux_amd64
       - run: chmod +x /usr/bin/yq
       - run: yq
