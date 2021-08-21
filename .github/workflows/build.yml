@@ -43,4 +43,24 @@ jobs:
           docker build src --file src/crop/Dockerfile --tag composite
           docker tag composite $IMAGE_ID:$APP_VERSION
           docker push $IMAGE_ID:$APP_VERSION
+  publish:
 
+    needs: containers
+    
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v2
+        - run: wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq 
+          env:
+            VERSION: v4.2.0
+            BINARY: yq_linux_amd64
+        - run: chmod +x /usr/bin/yq
+        - run: yq -i eval '(.$graph[] | select (.id == "crop-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/crop:1.0.0"' app-package.cwl 
+        - run: yq -i eval '(.$graph[] | select (.id == "composite-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/composite:1.0.0"' app-package.cwl 
+        - run: mkdir downloads
+        - run: cp app-package.cwl downloads/app-s2-composites.$APP_VERSION.cwl
+        - uses: actions/upload-artifact@v2
+          with: 
+            name: application-package
+            path: downloads
