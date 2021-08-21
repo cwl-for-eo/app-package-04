@@ -1,0 +1,10 @@
+products:
+  - class: Directory
+    path: /Users/fbrito/Downloads/docker_tmpoj8r5t9a
+  - class: Directory
+    path: /Users/fbrito/Documents/bp-bash-gdal/docker_tmpol09wdse
+red: B04
+green: B03
+blue: B02
+bbox: "136.522,-36.062,137.027,-35.693"
+proj: "EPSG:4326"
