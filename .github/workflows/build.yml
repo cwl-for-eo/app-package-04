@@ -30,3 +30,4 @@ jobs:
       - run: chmod +x /usr/bin/yq
       - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
       - run: echo $APP_VERSION
+      - run: docker build -f src/crop/Dockerfile src
