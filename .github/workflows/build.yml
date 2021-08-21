@@ -14,3 +14,15 @@ jobs:
           python-version: 3.x
       - run: pip install cwltool
       - run: cwltool --validate app-package.cwl#s2-composites
+
+container-crop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - env:
+        VERSION=v4.2.0
+        BINARY=yq_linux_amd64
+      - uses: actions/checkout@v2
+      - run: wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq 
+      - run: chmod +x /usr/bin/yq
+      - run: yq
