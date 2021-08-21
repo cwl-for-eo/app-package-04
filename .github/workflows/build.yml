@@ -31,10 +31,11 @@ jobs:
       - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
       - run: echo $APP_VERSION
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      - run: |
-        IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/crop
-        docker build src --file src/crop/Dockerfile --tag crop
-        docker tag crop $IMAGE_ID:$APP_VERSION
-        docker tag crop $IMAGE_ID:latest
-        docker push $IMAGE_ID:$APP_VERSION
-        docker push $IMAGE_ID:latest
+      - name: push crop image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/crop
+          docker build src --file src/crop/Dockerfile --tag crop
+          docker tag crop $IMAGE_ID:$APP_VERSION
+          docker tag crop $IMAGE_ID:latest
+          docker push $IMAGE_ID:$APP_VERSION
+          docker push $IMAGE_ID:latest
