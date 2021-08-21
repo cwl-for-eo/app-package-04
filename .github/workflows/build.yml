@@ -68,8 +68,8 @@ jobs:
       - uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: downloads/app-s2-composites.$APP_VERSION.cwl
-          asset_name: mything
-          tag: $APP_VERSION
+          file: downloads/app-s2-composites.${{ APP_VERSION }}.cwl
+          asset_name: application-package
+          tag: ${{ APP_VERSION }}
           overwrite: true
-          body: "Application package app-s2-composites.$APP_VERSION.cwl"
+          body: "Application package app-s2-composites.${{ APP_VERSION }}.cwl"
