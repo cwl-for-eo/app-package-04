@@ -15,7 +15,7 @@ jobs:
       - run: pip install cwltool
       - run: cwltool --validate app-package.cwl#s2-composites
 
-container-crop:
+  container-crop:
     runs-on: ubuntu-latest
 
     steps:
