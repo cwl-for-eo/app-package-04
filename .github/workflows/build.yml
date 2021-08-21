@@ -13,4 +13,4 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install cwltool
-      - run: cwltool --validate app-package.cwl
+      - run: cwltool --validate app-package.cwl#s2-composites
