@@ -73,7 +73,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: downloads/app-s2-composites*.cwl
           asset_name: application-package
-          tag: ${{ steps.set_version.outputs.APP_VERSION }}
+          tag: 1.0.0
           overwrite: true
           file_glob: true
           body: "Application package app-s2-composites.${{ steps.set_version.outputs.APP_VERSION }}.cwl"
