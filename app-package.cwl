@@ -239,7 +239,7 @@ $graph:
 
 $namespaces:
   s: https://schema.org/
-s:softwareVersion: 1.0.0
+s:softwareVersion: 1.0.1
 schemas:
 - http://schema.org/version/9.0/schemaorg-current-http.rdf
 
