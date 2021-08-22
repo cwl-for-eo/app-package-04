@@ -80,6 +80,7 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          APP_VERSION: ${{ steps.set_version.outputs.APP_VERSION }}
       - name: upload linux artifact
         uses: actions/upload-release-asset@v1
         env:
