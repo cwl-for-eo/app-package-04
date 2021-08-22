@@ -89,6 +89,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: downloads/app-s2-composites.$APP_VERSION.cwl
-          asset_name: app-s2-composites.$APP_VERSION.cwl
+          asset_path: downloads/app-s2-composites.${{ steps.version.outputs.version }}.cwl
+          asset_name: app-s2-composites.${{ steps.version.outputs.version }}.cwl
           asset_content_type: text/yaml
