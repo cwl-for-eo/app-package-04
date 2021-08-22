@@ -69,12 +69,23 @@ jobs:
         with: 
           name: application-package
           path: downloads
-      - uses: svenstaro/upload-release-action@v2
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: downloads/app-s2-composites*.cwl
-          asset_name: application-package
-          tag: ${{ steps.set_version.outputs.APP_VERSION }}
-          overwrite: true
-          file_glob: true
-          body: "Application package app-s2-composites.${{ steps.set_version.outputs.APP_VERSION }}.cwl"
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.set_version.outputs.APP_VERSION }}
+          tag_name: ${{ steps.set_version.outputs.APP_VERSION }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: downloads/app-s2-composites.$APP_VERSION.cwl
+          asset_name: app-s2-composites.$APP_VERSION.cwl
+          asset_content_type: text/yaml
