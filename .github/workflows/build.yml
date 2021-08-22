@@ -76,7 +76,7 @@ jobs:
           draft: false
           prerelease: false
           release_name: ${{ steps.set_version.outputs.APP_VERSION }}
-          tag_name: $APP_VERSION
+          tag_name: APP_VERSION
           #body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
