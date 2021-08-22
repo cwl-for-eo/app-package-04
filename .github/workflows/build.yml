@@ -70,7 +70,7 @@ jobs:
           name: application-package
           path: downloads
       - name: version
-        run: echo "::set-output name=version::$VERSION"
+        run: echo "::set-output name=version::$APP_VERSION"
         id: version
       - name: release
         uses: actions/create-release@v1
@@ -79,7 +79,7 @@ jobs:
           draft: false
           prerelease: false
           release_name:  ${{ steps.version.outputs.version }}
-          tag_name: $APP_VERSION
+          tag_name: ${{ steps.version.outputs.version }}
           #body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
