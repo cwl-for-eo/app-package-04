@@ -63,7 +63,6 @@ jobs:
         id: set_version
         run: |
           echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
-          echo "::set-output name=APP_VERSION::$APP_VERSION"
       - run: cp app-package.cwl downloads/app-s2-composites.$APP_VERSION.cwl
       - uses: actions/upload-artifact@v2
         with: 
