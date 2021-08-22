@@ -40,7 +40,7 @@ jobs:
       - name: build & push composite image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/composite
-          docker build src --file src/crop/Dockerfile --tag composite
+          docker build src --file src/composite/Dockerfile --tag composite
           docker tag composite $IMAGE_ID:$APP_VERSION
           docker push $IMAGE_ID:$APP_VERSION
   publish:
