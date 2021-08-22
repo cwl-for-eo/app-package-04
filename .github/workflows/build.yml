@@ -60,6 +60,7 @@ jobs:
       - run: yq -i eval '(.$graph[] | select (.id == "composite-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/composite:1.0.0"' app-package.cwl 
       - run: mkdir downloads
       - name: set_version
+        id: set_version
         run: |
           echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
           echo "::set-output name=APP_VERSION::$APP_VERSION"
@@ -73,7 +74,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: downloads/app-s2-composites*.cwl
           asset_name: application-package
-          tag: 1.0.0
+          tag: ${{ steps.set_version.outputs.APP_VERSION }}
           overwrite: true
           file_glob: true
           body: "Application package app-s2-composites.${{ steps.set_version.outputs.APP_VERSION }}.cwl"
