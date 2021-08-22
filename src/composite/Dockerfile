@@ -5,6 +5,6 @@ RUN apt update && \
 
 ADD functions.sh /functions.sh
 
-ADD composite /usr/bin/composite
+ADD composite/composite /usr/bin/composite
   
 RUN chmod +x /usr/bin/composite

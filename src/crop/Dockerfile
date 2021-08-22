@@ -5,6 +5,6 @@ RUN apt update && \
 
 ADD functions.sh /functions.sh
 
-ADD crop /usr/bin/crop
+ADD crop/crop /usr/bin/crop
   
 RUN chmod +x /usr/bin/crop
