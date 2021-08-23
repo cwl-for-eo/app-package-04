@@ -32,6 +32,7 @@ jobs:
           BINARY: yq_linux_amd64
       - run: chmod +x /usr/bin/yq
       - run: APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )
+      - run: echo $APP_VERSION
       - id: set-version
         run: echo "::set-output name=version::$APP_VERSION"
 
