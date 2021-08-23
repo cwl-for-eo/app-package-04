@@ -31,8 +31,8 @@ jobs:
           VERSION: v4.2.0
           BINARY: yq_linux_amd64
       - run: chmod +x /usr/bin/yq
-      - run: APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )
-      - run: echo $APP_VERSION
+      - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
+      - run: echo app version is $APP_VERSION
       - id: set-version
         run: echo "::set-output name=version::$APP_VERSION"
 
@@ -44,7 +44,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: echo "version ${{needs.version.outputs.app-version}}"
+      - run: echo version ${{needs.version.outputs.app-version}}
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: build & push crop image
         run: |
