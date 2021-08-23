@@ -43,23 +43,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run: echo "version: ${{needs.version.outputs.version}}"
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: build & push crop image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/crop
           docker build src --file src/crop/Dockerfile --tag crop
-          docker tag crop $IMAGE_ID:$APP_VERSION
-          docker push $IMAGE_ID:$APP_VERSION
-        env:
-          APP_VERSION: ${{needs.version.outputs.version}}
+          docker tag crop $IMAGE_ID:${{needs.version.outputs.version}}
+          docker push $IMAGE_ID:${{needs.version.outputs.version}}
       - name: build & push composite image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/composite
           docker build src --file src/composite/Dockerfile --tag composite
-          docker tag composite $IMAGE_ID:$APP_VERSION
-          docker push $IMAGE_ID:$APP_VERSION
-        env:
-          APP_VERSION: ${{needs.version.outputs.version}}
+          docker tag composite $IMAGE_ID:${{needs.version.outputs.version}}
+          docker push $IMAGE_ID:${{needs.version.outputs.version}}
 
   publish:
 
