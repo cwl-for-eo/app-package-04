@@ -36,7 +36,7 @@ jobs:
       - id: set-version
         run: echo "::set-output name=version::$APP_VERSION"
 
-  containers:
+  container-crop:
    
     needs: version
     
@@ -52,6 +52,17 @@ jobs:
           docker build src --file src/crop/Dockerfile --tag crop
           docker tag crop $IMAGE_ID:${{needs.version.outputs.app-version}}
           docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
+
+  container-composite:
+   
+    needs: version
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo version ${{needs.version.outputs.app-version}}
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: build & push composite image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/composite
@@ -62,7 +73,8 @@ jobs:
   publish:
 
     needs: 
-      - containers
+      - container-crop
+      - container-composite
       - version
 
     runs-on: ubuntu-latest
