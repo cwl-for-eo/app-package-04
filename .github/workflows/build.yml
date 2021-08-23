@@ -15,11 +15,14 @@ jobs:
       - run: pip install cwltool
       - run: cwltool --validate app-package.cwl#s2-composites
 
-  containers:
-   
+  version:
     needs: validate
-    
+
     runs-on: ubuntu-latest
+
+    outputs:
+
+      output1: ${{ steps.step1.set-version.version }}
 
     steps:
       - uses: actions/checkout@v2
@@ -28,8 +31,18 @@ jobs:
           VERSION: v4.2.0
           BINARY: yq_linux_amd64
       - run: chmod +x /usr/bin/yq
-      - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
-      - run: echo $APP_VERSION
+     # - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
+      - id: set-version
+        run: echo "::set-output name=version::$APP_VERSION"
+
+  containers:
+   
+    needs: version
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: build & push crop image
         run: |
@@ -37,37 +50,32 @@ jobs:
           docker build src --file src/crop/Dockerfile --tag crop
           docker tag crop $IMAGE_ID:$APP_VERSION
           docker push $IMAGE_ID:$APP_VERSION
+        env:
+          APP_VERSION: ${{needs.version.outputs.version}}
       - name: build & push composite image
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/composite
           docker build src --file src/composite/Dockerfile --tag composite
           docker tag composite $IMAGE_ID:$APP_VERSION
           docker push $IMAGE_ID:$APP_VERSION
+        env:
+          APP_VERSION: ${{needs.version.outputs.version}}
+
   publish:
 
-    needs: containers
-    
+    needs: 
+      - containers
+      - version
+
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - run: wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq 
-        env:
-          VERSION: v4.2.0
-          BINARY: yq_linux_amd64
-      - run: chmod +x /usr/bin/yq
-      - name: set_version
-        id: set_version
-        run: |
-          echo "APP_VERSION=$( yq e '."s:softwareVersion"' app-package.cwl | tr -d "\n" )" >> $GITHUB_ENV
-      - name: version
-        run: echo "::set-output name=version::$APP_VERSION"
-        id: version
-      - run: yq -i eval '(.$graph[] | select (.id == "crop-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/crop:${{ steps.version.outputs.version }}"' app-package.cwl 
-      - run: yq -i eval '(.$graph[] | select (.id == "composite-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/composite:${{ steps.version.outputs.version }}"' app-package.cwl 
+      - run: yq -i eval '(.$graph[] | select (.id == "crop-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/crop:${{needs.version.outputs.version}}"' app-package.cwl 
+      - run: yq -i eval '(.$graph[] | select (.id == "composite-cl") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/cwl-for-eo/app-package-04/composite:${{needs.version.outputs.version}}"' app-package.cwl 
       - run: mkdir downloads
-      - run: cp app-package.cwl downloads/app-s2-composites.$APP_VERSION.cwl
-      - run: ls downloads/app-s2-composites.$APP_VERSION.cwl
+      - run: cp app-package.cwl downloads/app-s2-composites.${{needs.version.outputs.version}}.cwl
+      - run: ls downloads/app-s2-composites.${{needs.version.outputs.version}}.cwl
       - uses: actions/upload-artifact@v2
         with: 
           name: application-package
@@ -78,8 +86,8 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name:  ${{ steps.version.outputs.version }}
-          tag_name: ${{ steps.version.outputs.version }}
+          release_name: ${{needs.version.outputs.version}}
+          tag_name: ${{needs.version.outputs.version}}
           #body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -89,6 +97,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: downloads/app-s2-composites.${{ steps.version.outputs.version }}.cwl
-          asset_name: app-s2-composites.${{ steps.version.outputs.version }}.cwl
+          asset_path: downloads/app-s2-composites.${{needs.version.outputs.version}}.cwl
+          asset_name: app-s2-composites.${{needs.version.outputs.version}}.cwl
           asset_content_type: text/yaml
