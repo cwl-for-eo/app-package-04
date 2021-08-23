@@ -99,7 +99,7 @@ function init_item {
     jq --arg min_lon "$( echo $bbox | cut -d ',' -f 1)" \
     --arg min_lat "$( echo $bbox | cut -d ',' -f 2)" \
     --arg max_lon "$( echo $bbox | cut -d ',' -f 3)" \
-    --arg max_lat "$( echo $bbox | cut -d ',' -f 3)" \
+    --arg max_lat "$( echo $bbox | cut -d ',' -f 4)" \
     '.["geometry"].coordinates[0][0]=[$min_lon | tonumber, $min_lat | tonumber] | .["geometry"].coordinates[0][1]=[$max_lon | tonumber, $min_lat | tonumber] | .["geometry"].coordinates[0][2]=[$max_lon | tonumber, $max_lat | tonumber] | .["geometry"].coordinates[0][3]=[$min_lon | tonumber, $max_lat | tonumber] | .["geometry"].coordinates[0][4]=[$min_lon | tonumber, $min_lat | tonumber]' | # set the geojson Polygon coordinates
     jq --arg dt ${datetime} '.properties.datetime=$dt' | # set the datetime
     jq --arg gsd "${gsd}" '.properties.gsd=$gsd' | # set the gsd
