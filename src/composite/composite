@@ -9,7 +9,6 @@ blue_channel=$3 # tif file for composite blue channel
 
 in_dir=$4 # input STAC to retrieve the metadata (folder where the EO product is staged-in)
 
-bbox=$5 # area of interest
 
 gdalbuildvrt \
       -separate composite.vrt \
@@ -41,6 +40,14 @@ item=$( get_items ${catalog} )
 # as these are the same for the output STAC item
 datetime=$( get_item_property ${item} "datetime" )
 gsd=$( get_item_property ${item} "gsd" )
+
+# use gdal to get the bbox
+min_lon=$( gdalinfo -json composite.tif | jq .wgs84Extent.coordinates  - | jq ".[0]" - | jq  'map(.[0]) | min ' - )
+min_lat=$( gdalinfo -json composite.tif | jq .wgs84Extent.coordinates  - | jq ".[0]" - | jq  'map(.[1]) | min ' - )
+max_lon=$( gdalinfo -json composite.tif | jq .wgs84Extent.coordinates  - | jq ".[0]" - | jq  'map(.[0]) | max ' - )
+max_lat=$( gdalinfo -json composite.tif | jq .wgs84Extent.coordinates  - | jq ".[0]" - | jq  'map(.[1]) | max ' - )
+
+bbox="${min_lon},${min_lat},${max_lon},${max_lat}"
 
 # initialise a STAC item
 init_item ${datetime} "${bbox}" "${gsd}" > composite-item.json

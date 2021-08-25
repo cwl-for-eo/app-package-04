@@ -143,7 +143,6 @@ $graph:
         cropped_tifs:
           source:  node_crop/cropped_tif
         lineage: product  
-        bbox: bbox
 
       out:
         - rgb_composite
@@ -205,10 +204,6 @@ $graph:
       type: Directory
       inputBinding:
         position: 4
-    bbox: 
-      type: string
-      inputBinding:
-        position: 5
         
   outputs:
     rgb_composite:
@@ -239,7 +234,7 @@ $graph:
 
 $namespaces:
   s: https://schema.org/
-s:softwareVersion: 1.0.7
+s:softwareVersion: 1.0.8
 schemas:
 - http://schema.org/version/9.0/schemaorg-current-http.rdf
 
