@@ -71,6 +71,7 @@ $graph:
   requirements:
   - class: ScatterFeatureRequirement
   - class: InlineJavascriptRequirement
+  - class: MultipleInputFeatureRequirement
 
   inputs:
     product:
@@ -107,25 +108,13 @@ $graph:
       
   steps:
 
-    node_bands:
-
-      run: "#arrange_bands"
-
-      in: 
-        red: red
-        green: green
-        blue: blue
-
-      out:
-        - bands 
-
     node_crop:
 
       run: "#crop-cl"
 
       in:
         product: product 
-        band: node_bands/bands
+        band: [ red, green, blue ]
         bbox: bbox
         epsg: proj
 
@@ -153,7 +142,7 @@ $graph:
 
   requirements:
     DockerRequirement: 
-      dockerPull: terradue/crop-container
+      dockerPull: docker.pkg.github.com/cwl-for-eo/app-package-04/crop:1.0.8
 
   baseCommand: crop
   arguments: []
@@ -188,7 +177,7 @@ $graph:
 
   requirements:
     DockerRequirement: 
-      dockerPull: terradue/composite-container
+      dockerPull: docker.pkg.github.com/cwl-for-eo/app-package-04/composite:1.0.8
     InlineJavascriptRequirement: {}
 
   baseCommand: composite
@@ -210,27 +199,6 @@ $graph:
       outputBinding:
         glob: .
       type: Directory
-
-- class: ExpressionTool
-
-  id: arrange_bands 
-  
-  inputs:
-    red:
-      type: string
-    green:
-      type: string
-    blue:
-      type: string
- 
-  outputs:
-    bands:
-      type: string[]
-
-  expression: |
-    ${ 
-      return { "bands": [ inputs.red, inputs.green, inputs.blue ] } 
-    }
 
 $namespaces:
   s: https://schema.org/
